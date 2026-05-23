@@ -13,7 +13,7 @@ import {
   CheckCircle,
   Download,
   Search,
-  LogOut,
+  LogOut, Menu,
   Ban,
   Check,
   Plus,
@@ -287,7 +287,7 @@ function AdminDashboard() {
       <h2 className={`text-[24px] font-bold tracking-tight mb-6 ${headingFont}`}>Dashboard Summary</h2>
       
       {/* STATS */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4 mb-8">
         
         {/* TOTAL PATIENTS */}
         <div 
@@ -766,17 +766,17 @@ function AdminDashboard() {
       </div>
       
       <div className="space-y-3">
-        <div className="grid grid-cols-3 py-3 border-t border-[#e8e8ed] text-[13px]">
+        <div className="grid grid-cols-1 sm:grid-cols-3 py-3 border-t border-[#e8e8ed] text-[13px] gap-2">
           <div className="text-gray-400 font-medium">Email Address</div>
-          <div className="col-span-2 text-[#1d1d1f] font-semibold">{user?.email || "admin@example.com"}</div>
+          <div className="sm:col-span-2 text-[#1d1d1f] font-semibold">{user?.email || "admin@example.com"}</div>
         </div>
-        <div className="grid grid-cols-3 py-3 border-t border-[#e8e8ed] text-[13px]">
+        <div className="grid grid-cols-1 sm:grid-cols-3 py-3 border-t border-[#e8e8ed] text-[13px] gap-2">
           <div className="text-gray-400 font-medium">Role</div>
-          <div className="col-span-2 text-[#1d1d1f] font-semibold">ADMINISTRATOR</div>
+          <div className="sm:col-span-2 text-[#1d1d1f] font-semibold">ADMINISTRATOR</div>
         </div>
-        <div className="grid grid-cols-3 py-3 border-t border-[#e8e8ed] text-[13px]">
+        <div className="grid grid-cols-1 sm:grid-cols-3 py-3 border-t border-[#e8e8ed] text-[13px] gap-2">
           <div className="text-gray-400 font-medium">Status</div>
-          <div className="col-span-2 text-green-600 font-bold flex items-center gap-1.5">
+          <div className="sm:col-span-2 text-green-600 font-bold flex items-center gap-1.5">
              <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
              Active
           </div>
@@ -797,6 +797,8 @@ function AdminDashboard() {
     }
   };
 
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   const getActiveTabTitle = () => {
     switch (activeTab) {
       case "dashboard": return "Dashboard";
@@ -809,12 +811,14 @@ function AdminDashboard() {
     }
   };
 
+  // Sidebar classes: hidden on small screens unless open
+  const sidebarClasses = `fixed inset-y-0 left-0 w-60 flex flex-col shrink-0 p-5 z-50 ${adminSidebarBg} transform ${"${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}"} transition-transform duration-300 ease-in-out sm:relative sm:translate-x-0`;
+
   return (
-    <div className={`min-h-screen bg-[#fafafa] flex flex-col md:flex-row antialiased ${bodyFont}`}>
+    <div className={`min-h-screen bg-[#fafafa] flex flex-col md:flex-row antialiased ${bodyFont} overflow-x-hidden`}>
       
       {/* SIDEBAR */}
-      <div className={`w-full md:w-60 flex flex-col shrink-0 p-5 ${adminSidebarBg}`}>
-        
+      <div className={sidebarClasses}>
         {/* LOGO AREA */}
         <div className="flex items-center gap-3 mb-6">
           <div className="w-9 h-9 bg-[#0071e3] rounded-xl flex items-center justify-center text-white">
@@ -825,14 +829,10 @@ function AdminDashboard() {
             <p className="text-[9px] text-[#86868b] font-bold uppercase tracking-wider leading-none">International Hospital</p>
           </div>
         </div>
-
         {/* ADMIN HEADER */}
         <div className="mb-4">
-          <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pb-1 border-b border-[#e8e8ed]">
-            Admin
-          </div>
+          <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pb-1 border-b border-[#e8e8ed]">Admin</div>
         </div>
-
         {/* NAVIGATION LINKS */}
         <nav className="flex-1 space-y-1">
           <button
@@ -895,7 +895,6 @@ function AdminDashboard() {
             Profile
           </button>
         </nav>
-
         {/* SIDEBAR FOOTER */}
         <div className="pt-4 border-t border-[#e8e8ed] mt-auto">
           <div className="flex items-center gap-3 mb-3">
@@ -915,20 +914,35 @@ function AdminDashboard() {
             Logout
           </button>
         </div>
-
       </div>
+
+      {/* Overlay for mobile when sidebar open */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 sm:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
 
       {/* MAIN CONTENT */}
       <div className="flex-1 flex flex-col overflow-auto bg-[#fafafa]">
         
         {/* TOP BAR / PORTAL HEADER */}
-        <header className="px-6 md:px-10 py-4 bg-white border-b border-[#e8e8ed] flex items-center justify-between shrink-0">
-          <div>
-            <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest leading-none">Admin Portal</p>
-            <h2 className="text-[14px] font-bold text-[#1d1d1f] mt-1">{getActiveTabTitle()}</h2>
-          </div>
-          <div className="border border-[#d2d2d7] rounded-full px-3 py-1 text-[11px] text-gray-500 font-medium bg-[#fafafa]">
-            {getHeaderDate()}
+        <header className="px-6 md:px-10 py-4 bg-white border-b border-[#e8e8ed] flex items-center justify-between shrink-0 relative">
+          <button
+            className="sm:hidden text-gray-600 hover:text-gray-800 focus:outline-none"
+            onClick={() => setSidebarOpen(true)}
+          >
+            <Menu size={24} />
+          </button>
+          <div className="flex items-center gap-4">
+            <div>
+              <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest leading-none">Admin Portal</p>
+              <h2 className="text-[14px] font-bold text-[#1d1d1f] mt-1">{getActiveTabTitle()}</h2>
+            </div>
+            <div className="border border-[#d2d2d7] rounded-full px-3 py-1 text-[11px] text-gray-500 font-medium bg-[#fafafa]">
+              {getHeaderDate()}
+            </div>
           </div>
         </header>
 
