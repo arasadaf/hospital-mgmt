@@ -109,10 +109,16 @@ app.use(
 // DATABASE CONNECTION
 const connectDB = async () => {
   try {
+    const dbUrl = process.env.DB_URL || process.env.MONGO_URI;
 
-    await mongoose.connect(
-      process.env.DB_URL
-    );
+    if (!dbUrl) {
+      console.error("❌ ERROR: No database URL found in environment variables.");
+      console.error("Available environment variable keys:", Object.keys(process.env).join(", "));
+      console.error("Please ensure DB_URL is set in your Render environment variables.");
+      process.exit(1);
+    }
+
+    await mongoose.connect(dbUrl);
 
     console.log(
       "DB connection successful"

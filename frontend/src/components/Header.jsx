@@ -16,6 +16,8 @@ import {
   MapPin,
   Clock,
   ChevronDown,
+  Menu,
+  X,
 } from "lucide-react";
 
 function Header() {
@@ -27,7 +29,7 @@ function Header() {
 
   // dropdown states
   const [open, setOpen] = useState(false);
-
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [locationOpen, setLocationOpen] = useState(false);
 
   // hospital locations
@@ -132,83 +134,92 @@ function Header() {
 
           {/* RIGHT NAVIGATION */}
           <div className="flex items-center gap-3 md:gap-4">
-
-            {/* HOME */}
-            <NavLink
-              to="/"
-              className={navLinkStyle}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden inline-flex items-center justify-center w-11 h-11 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 transition"
+              aria-label="Toggle navigation"
             >
-              <Home size={16} />
-              <span className="hidden sm:inline">
-                Home
-              </span>
-            </NavLink>
+              {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
 
-            {/* DOCTORS */}
-            <NavLink
-              to="/doctors"
-              className={navLinkStyle}
-            >
-              <Stethoscope size={16} />
-              <span>Doctors</span>
-            </NavLink>
+            <div className="hidden md:flex items-center gap-3 md:gap-4">
 
-            {/* LOCATIONS DROPDOWN */}
-            <div className="relative">
-
-              <button
-                onClick={() =>
-                  setLocationOpen(!locationOpen)
-                }
-                className="
-                  flex
-                  items-center
-                  gap-1.5
-                  py-2
-                  px-3
-                  text-sm
-                  font-semibold
-                  text-gray-600
-                  hover:text-blue-600
-                  hover:bg-gray-50/50
-                  rounded-xl
-                  transition-all
-                  duration-300
-                "
+              {/* HOME */}
+              <NavLink
+                to="/"
+                className={navLinkStyle}
               >
-                <MapPin size={16} />
+                <Home size={16} />
+                <span className="hidden sm:inline">
+                  Home
+                </span>
+              </NavLink>
 
-                <span>Locations</span>
+              {/* DOCTORS */}
+              <NavLink
+                to="/doctors"
+                className={navLinkStyle}
+              >
+                <Stethoscope size={16} />
+                <span>Doctors</span>
+              </NavLink>
 
-                <ChevronDown
-                  size={15}
-                  className={`transition-transform duration-300 ${
-                    locationOpen
-                      ? "rotate-180"
-                      : ""
-                  }`}
-                />
+              {/* LOCATIONS DROPDOWN */}
+              <div className="relative">
 
-              </button>
-
-              {/* DROPDOWN */}
-              {locationOpen && (
-
-                <div
+                <button
+                  onClick={() =>
+                    setLocationOpen(!locationOpen)
+                  }
                   className="
-                    absolute
-                    top-12
-                    left-0
-                    w-72
-                    bg-white
-                    border
-                    border-gray-100
-                    rounded-2xl
-                    shadow-xl
-                    overflow-hidden
-                    z-50
+                    flex
+                    items-center
+                    gap-1.5
+                    py-2
+                    px-3
+                    text-sm
+                    font-semibold
+                    text-gray-600
+                    hover:text-blue-600
+                    hover:bg-gray-50/50
+                    rounded-xl
+                    transition-all
+                    duration-300
                   "
                 >
+                  <MapPin size={16} />
+
+                  <span>Locations</span>
+
+                  <ChevronDown
+                    size={15}
+                    className={`transition-transform duration-300 ${
+                      locationOpen
+                        ? "rotate-180"
+                        : ""
+                    }`}
+                  />
+
+                </button>
+
+                {/* DROPDOWN */}
+                {locationOpen && (
+
+                  <div
+                    className="
+                      absolute
+                      top-12
+                      left-0
+                      w-72
+                      bg-white
+                      border
+                      border-gray-100
+                      rounded-2xl
+                      shadow-xl
+                      overflow-hidden
+                      z-50
+                    "
+                  >
 
                   {/* title */}
                   <div className="px-4 py-3 border-b border-gray-100 bg-blue-50">
@@ -534,6 +545,68 @@ function Header() {
           </div>
 
         </div>
+
+        {mobileMenuOpen && (
+          <div className="md:hidden bg-white border-t border-gray-100 shadow-xl">
+            <div className="px-4 py-4 space-y-2">
+              <NavLink
+                to="/"
+                onClick={() => setMobileMenuOpen(false)}
+                className={({ isActive }) =>
+                  `flex items-center gap-2 rounded-xl px-3 py-3 text-sm font-semibold transition-all duration-200 ${
+                    isActive ? "bg-blue-50 text-blue-600" : "text-gray-600 hover:bg-gray-50"
+                  }`
+                }
+              >
+                <Home size={16} /> Home
+              </NavLink>
+
+              <NavLink
+                to="/doctors"
+                onClick={() => setMobileMenuOpen(false)}
+                className={({ isActive }) =>
+                  `flex items-center gap-2 rounded-xl px-3 py-3 text-sm font-semibold transition-all duration-200 ${
+                    isActive ? "bg-blue-50 text-blue-600" : "text-gray-600 hover:bg-gray-50"
+                  }`
+                }
+              >
+                <Stethoscope size={16} /> Doctors
+              </NavLink>
+
+              <button
+                type="button"
+                onClick={() => setLocationOpen(!locationOpen)}
+                className="flex w-full items-center justify-between gap-2 rounded-xl px-3 py-3 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-all duration-200"
+              >
+                <span className="flex items-center gap-2">
+                  <MapPin size={16} /> Locations
+                </span>
+                <ChevronDown
+                  size={15}
+                  className={`transition-transform duration-300 ${locationOpen ? "rotate-180" : ""}`}
+                />
+              </button>
+
+              {locationOpen && (
+                <div className="rounded-2xl bg-slate-50 border border-gray-100 p-3 space-y-2">
+                  {hospitalLocations.map((location, index) => (
+                    <button
+                      key={index}
+                      onClick={() => {
+                        navigate("/locations");
+                        setLocationOpen(false);
+                        setMobileMenuOpen(false);
+                      }}
+                      className="w-full text-left rounded-xl px-3 py-2 text-sm text-gray-700 hover:bg-white transition"
+                    >
+                      {location}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
       </nav>
 
